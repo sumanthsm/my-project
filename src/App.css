@@ -1,0 +1,52 @@
+
+.icon {
+  margin: 0 auto;
+  width: 100%;
+  height: 80px;
+  max-width:80px;
+  background: linear-gradient(90deg, #4e9aed 0%, #007bff 40%, rgba(0, 0, 0, 0) 60%);
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  transition: all 0.8s ease;
+  background-position: 0px;
+  background-size: 200px;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.card {
+  transition: transform .2s;
+  animation: bounceIn 2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card:hover .icon {
+  background-position: -120px;
+  transition: all 0.3s ease;
+}
+
+.card:hover .icon i {
+  background: linear-gradient(90deg, #4e9aed, #007bff);
+  -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
