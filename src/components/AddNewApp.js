@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
-import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 
 export default class AddNewApp extends React.Component {
     constructor(props) {
@@ -14,7 +13,10 @@ export default class AddNewApp extends React.Component {
             appDesc: '',
             appUrl: '',
             shortcutsData: [],
-            isToggleOpen: false,
+            containerMargin: '80px',
+            navWidth: '80px',
+            navMarginLeft: '0px',
+            isMenuExpanded: false,
             containerMargin: '64px'
         }
     }
@@ -84,8 +86,6 @@ export default class AddNewApp extends React.Component {
 
     handleSubmmit = () => {
         let appObj = {};
-        console.log(this.state, "state");
-        
         appObj['appId'] = this.state.appId;
         appObj['appAbrev'] = this.state.appAbrev;
         appObj['appName'] = this.state.appName;
@@ -94,55 +94,60 @@ export default class AddNewApp extends React.Component {
         this.setAppData(appObj);
     }
 
+    openNav = () => {
+        this.setState({
+            containerMargin: '250px',
+            isMenuExpanded: true,
+            navWidth: '250px',
+            navMarginLeft: '250px'
+        });
+    }
+
+    closeNav = () => {
+        this.setState({
+            containerMargin: '80px',
+            isMenuExpanded: false,
+            navWidth: '80px',
+            navMarginLeft: '0px'
+        });
+    }
+
     render() {
         return (
             <div id="container">
-
                 <div style={{ position: 'relative' }}>
-
-                <SideNav
-                        style={{ background: '#007bff' }}
-                    >
-                        <SideNav.Toggle onClick={this.handleToggle} />
-                        <SideNav.Nav defaultSelected="home">
-                            <NavItem eventKey="home">
-                                <NavIcon>
-                                    <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-                                </NavIcon>
-                                <NavText>
-                                    <Link to="/">Home</Link>
-                                </NavText>
-                            </NavItem>
-                            <NavItem >
-
-                                <NavIcon>
-                                    <i className="fa fa-fw fa-plus-circle" style={{ fontSize: '1.75em' }} />
-                                </NavIcon>
-                                <NavText>
-                                    <Link to="/addnew">
-                                        Add new app
-                                        </Link>
-                                </NavText>
-                            </NavItem>
-                            <hr />
+                <div id="mySidenav" className="sidenav" style={{ width: this.state.navWidth }}>
+                        <span style={{ fontSize: '30px', cursor: 'pointer', color: 'white', padding: '30px' }} onClick={this.openNav}>&#9776; </span>
+                        {
+                            this.state.isMenuExpanded ? <a href="javascript:void(0)" className="closebtn" onClick={this.closeNav}>&times;</a> : null
+                        }
+                        <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                            <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
                             {
-                                this.state.shortcutsData.map((shortcut, i) => {
-                                    return (
-                                        <NavItem key={i}>
-                                            <NavIcon>
-                                                <i className="fa fa-fw fa-circle-thin" style={{ fontSize: '1.75em' }} />
-                                            </NavIcon>
-                                            <NavText>
-                                                <Link to={shortcut.appUrl}>{shortcut.appName}</Link>
-                                            </NavText>
-                                        </NavItem>
-                                    )
-                                })
+                                this.state.isMenuExpanded ? <Link to="/" style={{ transition: '0.5s' }}>Home</Link> : null
                             }
-
-                        </SideNav.Nav>
-                    </SideNav>
-                    <div style={{ marginLeft: this.state.containerMargin }}>
+                        </div>
+                        <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                            <i className="fa fa-fw fa-plus-circle" style={{ fontSize: '1.75em' }} />
+                            {
+                                this.state.isMenuExpanded ? <Link to="/addnew" style={{ transition: '0.5s' }}>Add new app</Link> : null
+                            }
+                        </div>
+                        <hr />
+                        {
+                            this.state.shortcutsData.map((shortcut, i) => {
+                                return (
+                                    <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                                        <i className="fa fa-fw fa-circle-thin" style={{ fontSize: '1.75em' }} />
+                                        {
+                                            this.state.isMenuExpanded ? <Link to={shortcut.appUrl} style={{ transition: '0.5s' }}>{shortcut.appName}</Link> : null
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                    <div style={{ marginLeft: this.state.containerMargin, transition: '0.5s' }}>
                         <nav className="navbar navbar-expand-sm bg-primary navbar-dark">
                             <span style={{ color: 'white', padding: '12px 0px' }}>EIS App Store</span>
                         </nav>

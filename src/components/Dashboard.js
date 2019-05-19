@@ -1,10 +1,8 @@
 import React from 'react';
-import Slider from 'react-slick';
 import axios from 'axios';
 import chunk from 'lodash/chunk';
 import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 
 export default class Dashboard extends React.Component {
     constructor(props) {
@@ -13,8 +11,10 @@ export default class Dashboard extends React.Component {
             searchTerm: '',
             appData: [],
             shortcutsData: [],
-            isToggleOpen: false,
-            containerMargin: '64px',
+            containerMargin: '80px',
+            navWidth: '80px',
+            navMarginLeft: '0px',
+            isMenuExpanded: false,
             typingTimeout: 0
         }
     }
@@ -47,34 +47,32 @@ export default class Dashboard extends React.Component {
     }
 
     onChange = (e) => {
-        if(this.state.typingTimeout){
+        if (this.state.typingTimeout) {
             clearTimeout(this.state.typingTimeout);
         }
 
-        this.setState({ 
+        this.setState({
             searchTerm: e.target.value,
             typingTimeout: setTimeout(() => {
                 this.onDataChange();
             }, 1000)
-         });
+        });
     }
 
     onDataChange = () => {
         const { searchTerm } = this.state;
-        console.log(searchTerm, "searchterm");
-
         if (searchTerm === '') {
             this.getAppData();
         } else {
-                axios.get('http://localhost:5000/api/appdata' + searchTerm)
-                    .then((response) => {
-                        let data = response.data;
-                        console.log(data);
-                        this.setState({ appData: data });
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+            axios.get('http://localhost:5000/api/appdata' + searchTerm)
+                .then((response) => {
+                    let data = response.data;
+                    console.log(data);
+                    this.setState({ appData: data });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
     }
 
@@ -103,25 +101,25 @@ export default class Dashboard extends React.Component {
             });
     }
 
-    handleToggle = (e) => {
-        console.log(e, "handleToggle");
-        if (!this.state.isToggleOpen) {
-            this.setState({ containerMargin: '240px', isToggleOpen: true });
-        } else {
-            this.setState({ containerMargin: '64px', isToggleOpen: false });
-        }
+    openNav = () => {
+        this.setState({
+            containerMargin: '250px',
+            isMenuExpanded: true,
+            navWidth: '250px',
+            navMarginLeft: '250px'
+        });
+    }
 
+    closeNav = () => {
+        this.setState({
+            containerMargin: '80px',
+            isMenuExpanded: false,
+            navWidth: '80px',
+            navMarginLeft: '0px'
+        });
     }
 
     render() {
-        const settings = {
-            dots: false,
-            infinite: true,
-            speed: 500,
-            slidesToShow: 5,
-            slidesToScroll: 1
-        };
-
         const { appData } = this.state;
         const chunkedAppData = chunk(appData, 4);
 
@@ -129,51 +127,38 @@ export default class Dashboard extends React.Component {
             <div id="container">
 
                 <div style={{ position: 'relative' }}>
-
-                    <SideNav
-                        style={{ background: '#007bff' }}
-                    >
-                        <SideNav.Toggle onClick={this.handleToggle} />
-                        <SideNav.Nav defaultSelected="home">
-                            <NavItem eventKey="home">
-                                <NavIcon>
-                                    <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-                                </NavIcon>
-                                <NavText>
-                                    <Link to="/">Home</Link>
-                                </NavText>
-                            </NavItem>
-                            <NavItem >
-
-                                <NavIcon>
-                                    <i className="fa fa-fw fa-plus-circle" style={{ fontSize: '1.75em' }} />
-                                </NavIcon>
-                                <NavText>
-                                    <Link to="/addnew">
-                                        Add new app
-                                        </Link>
-                                </NavText>
-                            </NavItem>
-                            <hr />
+                    <div id="mySidenav" className="sidenav" style={{ width: this.state.navWidth }}>
+                        <span style={{ fontSize: '30px', cursor: 'pointer', color: 'white', padding: '30px' }} onClick={this.openNav}>&#9776; </span>
+                        {
+                            this.state.isMenuExpanded ? <a href="javascript:void(0)" className="closebtn" onClick={this.closeNav}>&times;</a> : null
+                        }
+                        <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                            <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
                             {
-                                this.state.shortcutsData.map((shortcut, i) => {
-                                    return (
-                                        <NavItem>
-
-                                            <NavIcon>
-                                                <i className="fa fa-fw fa-circle-thin" style={{ fontSize: '1.75em' }} />
-                                            </NavIcon>
-                                            <NavText>
-                                                <Link to={shortcut.appUrl}>{shortcut.appName}</Link>
-                                            </NavText>
-                                        </NavItem>
-                                    )
-                                })
+                                this.state.isMenuExpanded ? <Link to="/" style={{ transition: '0.5s' }}>Home</Link> : null
                             }
-
-                        </SideNav.Nav>
-                    </SideNav>
-                    <div style={{ marginLeft: this.state.containerMargin }}>
+                        </div>
+                        <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                            <i className="fa fa-fw fa-plus-circle" style={{ fontSize: '1.75em' }} />
+                            {
+                                this.state.isMenuExpanded ? <Link to="/addnew" style={{ transition: '0.5s' }}>Add new app</Link> : null
+                            }
+                        </div>
+                        <hr />
+                        {
+                            this.state.shortcutsData.map((shortcut, i) => {
+                                return (
+                                    <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                                        <i className="fa fa-fw fa-circle-thin" style={{ fontSize: '1.75em' }} />
+                                        {
+                                            this.state.isMenuExpanded ? <Link to={shortcut.appUrl} style={{ transition: '0.5s' }}>{shortcut.appName}</Link> : null
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                    <div style={{ marginLeft: this.state.containerMargin, transition: '0.5s' }}>
                         <nav className="navbar navbar-expand-sm bg-primary navbar-dark">
                             <span style={{ color: 'white', padding: '12px 0px' }}>EIS App Store</span>
                         </nav>
