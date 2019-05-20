@@ -90,6 +90,27 @@ app.post('/api/shortcutsdata', (req, res) => {
     }
 });
 
+app.post('/api/deleteshortcut', (req, res) => {
+    const fields = ['appId', 'appAbrv', 'appName', 'appDesc', 'appUrl'];
+    const opts = { fields };
+    let shortcutsData = convertShortcutsDataToJson();
+    const appId = req.body.appId;
+    const result = shortcutsData.filter((shortcut) => shortcut.appId !== appId);
+    // for(let i = 0; i < shortcutsData.length; i++){
+    //     if(shortcutsData[i].appId === appId){
+    //         flag = true;
+    //     }
+    // }
+    console.log(result, "result");
+    
+    fs.writeFile("./data/shortcutsdata.csv", json2csv(result, opts), function (err) {
+        if (err) {
+            throw err;
+        }
+    });
+    res.json({'status': 'success', 'msg' : 'Shortcut deleted successfully'});
+});
+
 app.post('/api/createapp', (req, res) => {
     const fields = ['appId', 'appAbrv', 'appName', 'appDesc', 'appUrl'];
     const opts = { fields };

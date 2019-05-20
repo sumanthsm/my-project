@@ -101,6 +101,30 @@ export default class Dashboard extends React.Component {
             });
     }
 
+    handleDelete = (appId) => {
+        axios.post('http://localhost:5000/api/deleteshortcut', { appId: appId })
+            .then((response) => {
+                if (response.data.status === 'success') {
+                    this.getShortcutsData();
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Shortcut added Successfully.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Shortcut already exists.',
+                    })
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     openNav = () => {
         this.setState({
             containerMargin: '250px',
@@ -125,7 +149,6 @@ export default class Dashboard extends React.Component {
 
         return (
             <div id="container">
-
                 <div style={{ position: 'relative' }}>
                     <div id="mySidenav" className="sidenav" style={{ width: this.state.navWidth }}>
                         <span style={{ fontSize: '30px', cursor: 'pointer', color: 'white', padding: '30px' }} onClick={this.openNav}>&#9776; </span>
@@ -148,8 +171,23 @@ export default class Dashboard extends React.Component {
                         {
                             this.state.shortcutsData.map((shortcut, i) => {
                                 return (
-                                    <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                                    <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white', position: 'relative' }} key={i}>
                                         <i className="fa fa-fw fa-circle-thin" style={{ fontSize: '1.75em' }} />
+                                        {
+                                            this.state.isMenuExpanded ? <i 
+                                            className="fa fa-trash" 
+                                            aria-hidden="true"
+                                            style={{
+                                                fontSize: '15px',
+                                                color: 'red',
+                                                position: "absolute",
+                                                bottom: '10px',
+                                                right: '30px',
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => this.handleDelete(shortcut.appId)}
+                                            ></i> : null
+                                        }
                                         {
                                             this.state.isMenuExpanded ? <Link to={shortcut.appUrl} style={{ transition: '0.5s' }}>{shortcut.appName}</Link> : null
                                         }
