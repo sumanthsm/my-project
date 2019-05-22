@@ -56,6 +56,20 @@ app.get('/api/appdata:name', (req, res) => {
     res.json(result);
 });
 
+app.get('/api/getappdata:id', (req, res) => {
+    console.log(req.params, "params");
+    
+    let result = {};
+    let appData = convertAppDataToJson();
+    for (let i = 0; i < appData.length; i++) {
+        let appId = appData[i]['appId'];
+        if (appId == req.params.id) {
+            result = appData[i];
+        }
+    }
+    res.json(result);
+});
+
 app.post('/api/shortcutsdata', (req, res) => {
     const fields = ['appId', 'appAbrv', 'appName', 'appDesc', 'appUrl'];
     const opts = { fields };
@@ -139,6 +153,36 @@ app.post('/api/createapp', (req, res) => {
         console.log("flag false");
         res.json({'status': 'fail'});
     }
+});
+
+
+app.post('/api/editapp', (req, res) => {
+    const fields = ['appId', 'appAbrv', 'appName', 'appDesc', 'appUrl'];
+    const opts = { fields };
+    let appData = convertAppDataToJson();
+    const newAppData = req.body.data;
+    console.log(appData, "appdata");
+    console.log(newAppData, "newappdata");
+    
+    for(let i=0;i<appData.length;i++){
+        if(appData[i]['appId'] === newAppData['appId']){
+            appData[i]['appId'] = newAppData['appId'];
+            appData[i]['appAbrv'] = newAppData['appAbrv'];
+            appData[i]['appName'] = newAppData['appName'];
+            appData[i]['appDesc'] = newAppData['appDesc'];
+            appData[i]['appUrl'] = newAppData['appUrl'];
+            console.log(i, "inside if");
+            break;
+        }
+    }
+    
+
+    fs.writeFile("./data/appdata.csv", json2csv(appData, opts), function (err) {
+        if (err) {
+            throw err;
+        }
+    });
+    res.json({'status': 'success'});
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

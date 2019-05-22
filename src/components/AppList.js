@@ -4,7 +4,7 @@ import chunk from 'lodash/chunk';
 import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 
-export default class Dashboard extends React.Component {
+export default class AppList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -145,7 +145,7 @@ export default class Dashboard extends React.Component {
 
     render() {
         const { appData } = this.state;
-        const chunkedAppData = chunk(appData, 4);
+        const chunkedAppData = chunk(appData, 2);
 
         return (
             <div id="container">
@@ -200,9 +200,9 @@ export default class Dashboard extends React.Component {
                         <nav className="navbar navbar-expand-sm bg-primary navbar-dark">
                             <span style={{ color: 'white', padding: '12px 0px' }}>EIS App Store</span>
                         </nav>
-                        <div className="row col-12">
-                            <div className="col-8" style={{ margin: '20px 0px ' }}>
-                                <div style={{ width: '500px',float: 'right', position: "relative" }}>
+                        <div className="row">
+                            <div className="col-6" style={{ margin: '20px auto' }}>
+                                <div style={{ position: "relative" }}>
                                     <i className="fa fa-search" style={{ position: 'absolute', padding: '10px', right: '10px' }}></i>
                                     <input
                                         className="form-control py-2"
@@ -215,9 +215,6 @@ export default class Dashboard extends React.Component {
                                     </input>
                                 </div>
                             </div>
-                            <div className="col-4" style={{marginTop: '20px'}}>
-                                <Link to="/addnew" className="btn btn-primary" >Add new app</Link>
-                            </div>
                         </div>
                         <div className="row">
                             {chunkedAppData.map((chunk, i) => {
@@ -225,26 +222,16 @@ export default class Dashboard extends React.Component {
                                     <div className="row col-12 " style={{ marginLeft: '8px' }} key={i}>
                                         {chunk.map((app, j) => {
                                             return (
-                                                <div className="col-3" key={j}>
-
-                                                    <div className="card mx-3 my-3" style={{ height: "250px", borderRadius: '30px', position: 'relative' }} key={i}>
-                                                        <span
-                                                            className="fa fa-plus-circle"
-                                                            style={{
-                                                                fontSize: '30px',
-                                                                position: "absolute",
-                                                                bottom: '20px',
-                                                                right: '20px',
-                                                                cursor: 'pointer'
-                                                            }}
-                                                            onClick={() => this.handleShortcut(app.appName)}>
-                                                        </span>
+                                                <div className="col-6" key={j}>
+                                                    <div className="card mx-3 my-3" style={{ position: 'relative' }} key={i}>
                                                         <a href={app.appUrl} style={{ textDecoration: 'none' }}>
-                                                            <div className="card-body" style={{ paddingTop: '50px' }}>
-                                                                <div className="icon" style={{ fontSize: '30px' }}>
-                                                                    <i className="fa fa-globe"></i>
+                                                            <div className="card-body">
+                                                                <div className="pull-left">
+                                                                    <p className="text text-center pt-2" >{app.appName}</p>
                                                                 </div>
-                                                                <p className="text text-center pt-3" >{app.appName}</p>
+                                                                <div className="pull-right">
+                                                                    <a className="btn btn-primary " href={"/editapp"+app.appId} >EDIT</a>
+                                                                </div>
                                                             </div>
                                                         </a>
                                                     </div>

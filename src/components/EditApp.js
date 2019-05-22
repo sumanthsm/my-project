@@ -3,12 +3,12 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 
-export default class AddNewApp extends React.Component {
+export default class EditApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             appId: '',
-            appAbrev: '',
+            appAbrv: '',
             appName: '',
             appDesc: '',
             appUrl: '',
@@ -22,7 +22,11 @@ export default class AddNewApp extends React.Component {
     }
 
     componentDidMount(){
+        console.log(this.props);
+        console.log(this.props.match.params.id, "id");
+        const appId = this.props.match.params.id;
         this.getShortcutsData();
+        this.getAppDataByID(appId);
     }
 
     getShortcutsData = () => {
@@ -36,13 +40,32 @@ export default class AddNewApp extends React.Component {
             });
     }
 
+    getAppDataByID = (appId) => {
+        axios.get('http://localhost:5000/api/getappdata'+appId)
+            .then((response) => {
+                let data = response.data;
+                console.log(data,"res");
+                this.setState({
+                    appId: data.appId,
+                    appAbrv: data.appAbrv,
+                    appName: data.appName,
+                    appDesc: data.appDesc,
+                    appUrl: data.appUrl
+                })
+                // this.setState({ shortcutsData: data });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     handleChange = (e) => {
         console.log(e.target.id);
         
         if (e.target.id === 'appId') {
             this.setState({ appId: e.target.value });
-        } else if (e.target.id === 'appAbrev') {
-            this.setState({ appAbrev: e.target.value });
+        } else if (e.target.id === 'appAbrv') {
+            this.setState({ appAbrv: e.target.value });
         } else if (e.target.id === 'appName') {
             this.setState({ appName: e.target.value });
         } else if (e.target.id === 'appDesc') {
@@ -52,8 +75,9 @@ export default class AddNewApp extends React.Component {
         }
     }
 
-    setAppData = (data) => {
-        axios.post('http://localhost:5000/api/createapp', { data: data })
+    updateAppData = (data) => {
+        console.log("update app");
+        axios.post('http://localhost:5000/api/editapp', { data: data })
             .then((response) => {
                 console.log(response, "res");
                 
@@ -66,7 +90,7 @@ export default class AddNewApp extends React.Component {
                     })
                     this.setState({
                         appId: '',
-                        appAbrev: '',
+                        appAbrv: '',
                         appName: '',
                         appDesc: '',
                         appUrl: '',
@@ -85,13 +109,15 @@ export default class AddNewApp extends React.Component {
     }
 
     handleSubmmit = () => {
+        console.log("handlesubmit");
+        
         let appObj = {};
         appObj['appId'] = this.state.appId;
-        appObj['appAbrev'] = this.state.appAbrev;
+        appObj['appAbrv'] = this.state.appAbrv;
         appObj['appName'] = this.state.appName;
         appObj['appDesc'] = this.state.appDesc;
         appObj['appUrl'] = this.state.appUrl;
-        this.setAppData(appObj);
+        this.updateAppData(appObj);
     }
 
     openNav = () => {
@@ -155,11 +181,11 @@ export default class AddNewApp extends React.Component {
                             <div className="form-row mt-4">
                                 <div className="form-group col-md-6">
                                     <label htmlFor="appId">APP ID:</label>
-                                    <input type="number" className="form-control" id="appId" value={this.state.appId} placeholder="APP ID" onChange={this.handleChange}></input>
+                                    <input type="number" className="form-control" id="appId" value={this.state.appId} placeholder="APP ID" disabled></input>
                                 </div>
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="appAbrev">APP ABRV</label>
-                                    <input type="text" className="form-control" id="appAbrev" value={this.state.appAbrev} placeholder="APP Abrevation" onChange={this.handleChange}></input>
+                                    <label htmlFor="appAbrv">APP ABRV</label>
+                                    <input type="text" className="form-control" id="appAbrv" value={this.state.appAbrv} placeholder="APP Abrevation" onChange={this.handleChange}></input>
                                 </div>
                             </div>
                             <div className="form-group">
@@ -174,7 +200,7 @@ export default class AddNewApp extends React.Component {
                                 <label htmlFor="appUrl">App Url</label>
                                 <input type="text" className="form-control" id="appUrl" value={this.state.appUrl} placeholder="APP Url" onChange={this.handleChange}></input>
                             </div>
-                            <button type="submit" className="btn btn-primary" onClick={this.handleSubmmit}>Create App</button>
+                            <button type="submit" className="btn btn-primary" onClick={this.handleSubmmit}>Update App</button>
                         </div>
                     </div>
                 </div>
