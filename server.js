@@ -125,6 +125,22 @@ app.post('/api/deleteshortcut', (req, res) => {
     res.json({'status': 'success', 'msg' : 'Shortcut deleted successfully'});
 });
 
+app.post('/api/deleteapp', (req, res) => {
+    const fields = ['appId', 'appAbrv', 'appName', 'appDesc', 'appUrl'];
+    const opts = { fields };
+    let appData = convertAppDataToJson();
+    const appId = req.body.appId;
+    const result = appData.filter((app) => app.appId !== appId);
+    console.log(result, "result");
+    
+    fs.writeFile("./data/appdata.csv", json2csv(result, opts), function (err) {
+        if (err) {
+            throw err;
+        }
+    });
+    res.json({'status': 'success', 'msg' : 'App deleted successfully'});
+});
+
 app.post('/api/createapp', (req, res) => {
     const fields = ['appId', 'appAbrv', 'appName', 'appDesc', 'appUrl'];
     const opts = { fields };

@@ -125,6 +125,30 @@ export default class AppList extends React.Component {
             });
     }
 
+    handleDeleteApp = (appId) => {
+        axios.post('http://localhost:5000/api/deleteapp', { appId: appId })
+            .then((response) => {
+                if (response.data.status === 'success') {
+                    this.getAppData();
+                    Swal.fire({
+                        type: 'success',
+                        title: 'App added Successfully.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'App not deleted',
+                    })
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     openNav = () => {
         this.setState({
             containerMargin: '250px',
@@ -224,16 +248,18 @@ export default class AppList extends React.Component {
                                             return (
                                                 <div className="col-6" key={j}>
                                                     <div className="card mx-3 my-3" style={{ position: 'relative' }} key={i}>
-                                                        <a href={app.appUrl} style={{ textDecoration: 'none' }}>
+                                                        
                                                             <div className="card-body">
-                                                                <div className="pull-left">
-                                                                    <p className="text text-center pt-2" >{app.appName}</p>
-                                                                </div>
+                                                                <a href={app.appUrl} style={{ textDecoration: 'none' }}>
+                                                                    <div className="pull-left">
+                                                                        <p className="text text-center pt-2" >{app.appName}</p>
+                                                                    </div>
+                                                                </a>
                                                                 <div className="pull-right">
-                                                                    <a className="btn btn-primary " href={"/editapp"+app.appId} >EDIT</a>
+                                                                    <a className="btn btn-primary " href={"/editapp"+app.appId} style={{marginRight: '10px'}}>Edit</a>
+                                                                    <button className="btn btn-danger" onClick={()=> this.handleDeleteApp(app.appId)} >Delete</button>
                                                                 </div>
                                                             </div>
-                                                        </a>
                                                     </div>
                                                 </div>
                                             )

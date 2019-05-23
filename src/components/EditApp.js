@@ -139,6 +139,8 @@ export default class EditApp extends React.Component {
     }
 
     render() {
+        const racf = localStorage.getItem('racf');
+        const fullName = localStorage.getItem('fullName');
         return (
             <div id="container">
                 <div style={{ position: 'relative' }}>
@@ -178,6 +180,16 @@ export default class EditApp extends React.Component {
                             <span style={{ color: 'white', padding: '12px 0px' }}>EIS App Store</span>
                         </nav>
                         <div className="container">
+                        <div className="form-row mt-4">
+                                <div className="form-group col-md-6">
+                                    <label htmlFor="racf">Racf*</label>
+                                    <input type="text" className="form-control" id="racf" value={racf} disabled></input>
+                                </div>
+                                <div className="form-group col-md-6">
+                                    <label htmlFor="fullName">Full Name</label>
+                                    <input type="text" className="form-control" id="fullName" value={fullName} disabled></input>
+                                </div>
+                            </div>
                             <div className="form-row mt-4">
                                 <div className="form-group col-md-6">
                                     <label htmlFor="appId">APP ID:</label>

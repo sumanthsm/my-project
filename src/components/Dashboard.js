@@ -146,7 +146,7 @@ export default class Dashboard extends React.Component {
     render() {
         const { appData } = this.state;
         const chunkedAppData = chunk(appData, 4);
-
+        const isLogin = localStorage.getItem('login');
         return (
             <div id="container">
                 <div style={{ position: 'relative' }}>
@@ -161,40 +161,45 @@ export default class Dashboard extends React.Component {
                                 this.state.isMenuExpanded ? <Link to="/" style={{ transition: '0.5s' }}>Home</Link> : null
                             }
                         </div>
-                        <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
-                            <i className="fa fa-fw fa-list" style={{ fontSize: '1.75em' }} />
-                            {
-                                this.state.isMenuExpanded ? <Link to="/applist" style={{ transition: '0.5s' }}>List of Apps</Link> : null
-                            }
-                        </div>
+                        {
+                            isLogin ? <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white' }}>
+                                <i className="fa fa-fw fa-list" style={{ fontSize: '1.75em' }} />
+                                {
+                                    this.state.isMenuExpanded ? <Link to="/applist" style={{ transition: '0.5s' }}>List of Apps</Link> : null
+                                }
+                            </div> : null
+                        }
                         <hr />
                         {
-                            this.state.shortcutsData.map((shortcut, i) => {
-                                return (
-                                    <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white', position: 'relative' }} key={i}>
-                                        <i className="fa fa-fw fa-circle-thin" style={{ fontSize: '1.75em' }} />
-                                        {
-                                            this.state.isMenuExpanded ? <i 
-                                            className="fa fa-trash" 
-                                            aria-hidden="true"
-                                            style={{
-                                                fontSize: '15px',
-                                                color: 'red',
-                                                position: "absolute",
-                                                bottom: '10px',
-                                                right: '30px',
-                                                cursor: 'pointer'
-                                            }}
-                                            onClick={() => this.handleDelete(shortcut.appId)}
-                                            ></i> : null
-                                        }
-                                        {
-                                            this.state.isMenuExpanded ? <Link to={shortcut.appUrl} style={{ transition: '0.5s' }}>{shortcut.appName}</Link> : null
-                                        }
-                                    </div>
-                                )
-                            })
+                            isLogin ? 
+                                this.state.shortcutsData.map((shortcut, i) => {
+                                    return (
+                                        <div className="row" style={{ marginLeft: '25px', paddingTop: '15px', color: 'white', position: 'relative' }} key={i}>
+                                            <i className="fa fa-fw fa-circle-thin" style={{ fontSize: '1.75em' }} />
+                                            {
+                                                this.state.isMenuExpanded ? <i 
+                                                className="fa fa-trash" 
+                                                aria-hidden="true"
+                                                style={{
+                                                    fontSize: '15px',
+                                                    color: 'red',
+                                                    position: "absolute",
+                                                    bottom: '10px',
+                                                    right: '30px',
+                                                    cursor: 'pointer'
+                                                }}
+                                                onClick={() => this.handleDelete(shortcut.appId)}
+                                                ></i> : null
+                                            }
+                                            {
+                                                this.state.isMenuExpanded ? <Link to={shortcut.appUrl} style={{ transition: '0.5s' }}>{shortcut.appName}</Link> : null
+                                            }
+                                        </div>
+                                    )
+                                })
+                             : null
                         }
+                        
                     </div>
                     <div style={{ marginLeft: this.state.containerMargin, transition: '0.5s' }}>
                         <nav className="navbar navbar-expand-sm bg-primary navbar-dark">
@@ -216,7 +221,9 @@ export default class Dashboard extends React.Component {
                                 </div>
                             </div>
                             <div className="col-4" style={{marginTop: '20px'}}>
-                                <Link to="/addnew" className="btn btn-primary" >Add new app</Link>
+                                {
+                                    isLogin ? <Link to="/addnew" className="btn btn-primary" >Add new app</Link> : null
+                                }
                             </div>
                         </div>
                         <div className="row">
@@ -228,7 +235,8 @@ export default class Dashboard extends React.Component {
                                                 <div className="col-3" key={j}>
 
                                                     <div className="card mx-3 my-3" style={{ height: "250px", borderRadius: '30px', position: 'relative' }} key={i}>
-                                                        <span
+                                                        {
+                                                            isLogin ? <span
                                                             className="fa fa-plus-circle"
                                                             style={{
                                                                 fontSize: '30px',
@@ -238,7 +246,9 @@ export default class Dashboard extends React.Component {
                                                                 cursor: 'pointer'
                                                             }}
                                                             onClick={() => this.handleShortcut(app.appName)}>
-                                                        </span>
+                                                        </span> : null
+                                                        }
+                                                        
                                                         <a href={app.appUrl} style={{ textDecoration: 'none' }}>
                                                             <div className="card-body" style={{ paddingTop: '50px' }}>
                                                                 <div className="icon" style={{ fontSize: '30px' }}>
